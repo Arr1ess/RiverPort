@@ -58,8 +58,7 @@ class Router
         $method = $_SERVER['REQUEST_METHOD'];
         $url = $_SERVER['REQUEST_URI'];
 
-        $urlPath = substr($url, strlen('/RiverPort'));
-        $urlPath = strtok($urlPath, '?');
+        $urlPath = strtok($url, '?');
         $urlPath = strtok($urlPath, '#');
 
         if (isset(self::$routes[$method][$urlPath])) {

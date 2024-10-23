@@ -14,12 +14,12 @@ class Page
 
     public function addScript(string $src, array $attributes = [])
     {
-        $this->scripts[] = ['src' => $src, 'attributes' => $attributes];
+        $this->scripts[] = ['src' => "/public/js/$src", 'attributes' => $attributes];
     }
 
     public function addStyle(string $href, array $attributes = [])
     {
-        $this->styles[] = ['href' => $href, 'attributes' => $attributes];
+        $this->styles[] = ['href' => "/public/css/$href", 'attributes' => $attributes];
     }
 
     public function setSeoData(array $seoData)

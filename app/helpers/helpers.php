@@ -27,9 +27,9 @@ function includeAllRoutes()
     includeAllFilesFromFolder(__DIR__ . "/../../routes");
 }
 
-function page(string $pagePath)
-{
-    return [new Page($pagePath), 'render'];
+function view(string $pagePath)
+{   
+    return [new Page(SERVER_NAME . "/app/views/$pagePath"), 'render'];
 }
 
 spl_autoload_register(function ($className) {
