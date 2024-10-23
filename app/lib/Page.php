@@ -3,14 +3,23 @@
 namespace app\lib;
 
 use app\router\responses\HtmlResponse as ResponsesHtmlResponse;
+use app\router\responses\JsonResponse;
 
 class Page
 {
     private array $scripts = [];
     private array $styles = [];
     private array $seoData = [];
+    private bool $isSinglePageAplication = false;
 
-    public function __construct(private string $filePath) {}
+    public function __construct(private string $filePath)
+    {
+        $queryString = $_SERVER['QUERY_STRING'] ?? '';
+        parse_str($queryString, $queryParams);
+        if (isset($queryParams['singlePageApplication']) && $queryParams['singlePageApplication'] === 'true') {
+            $this->isSinglePageAplication = true;
+        }
+    }
 
     public function addScript(string $src, array $attributes = [])
     {
@@ -70,11 +79,16 @@ class Page
         $this->getBody();
         $body = ob_get_clean();
 
-        $seoTags = $this->renderSeoTags();
-        $scripts = $this->renderScripts();
-        $styles = $this->renderStyles();
 
-        $page = <<<HTML
+
+        if ($this->isSinglePageAplication) {
+            return new JsonResponse(['body' => $body, 'scripts' => $this->scripts, 'styles' => $this->styles, 'seoTags' => $this->seoData]);
+        } else {
+            $seoTags = $this->renderSeoTags();
+            $scripts = $this->renderScripts();
+            $styles = $this->renderStyles();
+
+            $page = <<<HTML
             <!DOCTYPE html>
             <html lang="ru">
             <head>
@@ -86,8 +100,9 @@ class Page
                 $scripts
             </body>
             </html>
-        HTML;
+            HTML;
 
-        return new ResponsesHtmlResponse($page);
+            return new ResponsesHtmlResponse($page);
+        }
     }
 }

@@ -2,7 +2,7 @@
 <?php renderSinglePageAplictaion($this); ?>
 
 <main>
-    <h1>hi, it's home page</h1>
+    <h1>hi, it's start page</h1>
     <?php echo __DIR__; ?>
-    <a href="/">Главная</a>
+    <a href="/home">Home</a>
 </main>

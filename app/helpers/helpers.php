@@ -42,3 +42,8 @@ spl_autoload_register(function ($className) {
         throw new Exception("Class file not found: $filePath");
     }
 });
+
+
+function renderSinglePageAplictaion(Page $page){
+    $page->addScript("singlePageAplication.js", ["type=module"]);
+}
