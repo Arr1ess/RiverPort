@@ -1,8 +1,12 @@
 <?php
 
-use app\router\responses\RedirectResponse;
+use app\lib\Page;
 use app\router\Router;
 
-Router::get("/", view("start.php"));
-Router::get("/home", view("home.php"));
-Router::get("/admin", new RedirectResponse("/"));
+$arr = [new Page(SERVER_NAME . "/app/views/pages/home.php"), 'render'];
+
+Router::get("/", view("pages/start.php"));
+Router::get("/index.php", view("pages/start.php"));
+Router::get("/home", $arr);
+Router::get("/404", view("pages/404.php"));
+

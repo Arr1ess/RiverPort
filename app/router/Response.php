@@ -4,7 +4,7 @@ namespace app\router;
 
 abstract class Response
 {
-    private $code;
+    protected $code;
     protected $body;
     protected $headers = [];
 
@@ -50,5 +50,11 @@ abstract class Response
     public function __invoke()
     {
         return $this;
+    }
+
+    public static function __set_state($array)
+    {
+        $instance = new self($array['code'], $array['body'], $array['headers']);
+        return $instance;
     }
 }

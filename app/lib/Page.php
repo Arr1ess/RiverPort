@@ -105,4 +105,10 @@ class Page
             return new ResponsesHtmlResponse($page);
         }
     }
+
+    public static function __set_state($array)
+    {
+        $instance = new self($array['filePath']);
+        return $instance;
+    }
 }

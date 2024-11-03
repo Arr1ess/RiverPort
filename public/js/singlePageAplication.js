@@ -1,23 +1,25 @@
-// Найти все элементы <a>
-const links = document.querySelectorAll('a');
+var links = document.querySelectorAll('a');
 
-// Добавить обработчик события click к каждой ссылке
-links.forEach(link => {
-    link.addEventListener('click', function(event) {
-        // Отключить стандартное поведение
-        event.preventDefault();
-        
-        // Вывести в консоль URL, на который указывает ссылка
-        getNewPage(link.href);
-    });
-});
 
+function updateLinks() {
+
+    links.forEach(link => {
+        link.addEventListener('click', function (event) {
+            event.preventDefault();
+
+
+            getNewPage(link.href);
+        });
+    })
+}
+
+updateLinks();
 
 function getNewPage(url) {
     const params = new URLSearchParams();
     params.append('singlePageApplication', 'true');
 
-    // Добавляем параметры к URL
+
     const fullUrl = `${url}?${params.toString()}`;
 
     fetch(fullUrl, {
@@ -26,40 +28,36 @@ function getNewPage(url) {
             'Content-Type': 'application/x-www-form-urlencoded',
         },
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        changeUrl(url);
-        updatePage(data);
-    })
-    .catch(error => {
-        console.error('There was a problem with the fetch operation:', error);
-    });
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            changeUrl(url);
+            updatePage(data);
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
 }
 
- 
+
 function changeUrl(newUrl) {
     history.pushState(null, '', newUrl);
-    console.log('URL changed to:', newUrl);
 }
 
 
 function updatePage(jsonResponse) {
-    // Обновляем основное содержимое страницы
     const mainContent = document.querySelector('main');
     if (mainContent) {
         mainContent.innerHTML = jsonResponse.body;
     }
 
-    // Удаляем все текущие скрипты
     const currentScripts = document.querySelectorAll('script');
     currentScripts.forEach(script => script.remove());
 
-    // Добавляем новые скрипты
     jsonResponse.scripts.forEach(script => {
         const newScript = document.createElement('script');
         newScript.src = script.src;
@@ -72,11 +70,9 @@ function updatePage(jsonResponse) {
         document.body.appendChild(newScript);
     });
 
-    // Удаляем все текущие стили
     const currentStyles = document.querySelectorAll('link[rel="stylesheet"]');
     currentStyles.forEach(style => style.remove());
 
-    // Добавляем новые стили
     jsonResponse.styles.forEach(style => {
         const newStyle = document.createElement('link');
         newStyle.rel = 'stylesheet';
@@ -84,7 +80,6 @@ function updatePage(jsonResponse) {
         document.head.appendChild(newStyle);
     });
 
-    // Добавляем новые SEO теги
     jsonResponse.seoTags.forEach(tag => {
         const newTag = document.createElement(tag.tagName);
         if (tag.attributes && tag.attributes.length > 0) {
@@ -95,4 +90,6 @@ function updatePage(jsonResponse) {
         }
         document.head.appendChild(newTag);
     });
+
+    updateLinks();
 }

@@ -21,6 +21,31 @@ function includeAllFilesFromFolder($folderPath)
     }
 }
 
+function scanAndInitPlugins()
+{
+    $pluginsDir = SERVER_NAME . "/plugins";
+    if (!is_dir($pluginsDir)) {
+        echo "Директория с плагинами не найдена.";
+        return;
+    }
+    $pluginFolders = scandir($pluginsDir);
+
+    foreach ($pluginFolders as $folder) {
+        if ($folder === '.' || $folder === '..') {
+            continue;
+        }
+        $pluginFilePath = $pluginsDir . "/$folder/$folder.php";
+        if (file_exists($pluginFilePath)) {
+            require_once $pluginFilePath;
+            $pluginClassName = "plugins\\$folder\\$folder";
+            if (class_exists($pluginClassName) && in_array('app\interfaces\IPlugin', class_implements($pluginClassName))) {
+                $pluginClassName::init();
+                echo "Подключен $pluginClassName <br/>";
+            }
+        }
+    }
+}
+
 
 function includeAllRoutes()
 {
@@ -28,13 +53,13 @@ function includeAllRoutes()
 }
 
 function view(string $pagePath)
-{   
+{
     return [new Page(SERVER_NAME . "/app/views/$pagePath"), 'render'];
 }
 
 spl_autoload_register(function ($className) {
     $className = str_replace('\\', '/', $className);
-    $filePath = __DIR__ . "/../../" . $className . ".php";
+    $filePath = SERVER_NAME . "/$className.php";
 
     if (file_exists($filePath)) {
         require_once $filePath;
@@ -44,6 +69,8 @@ spl_autoload_register(function ($className) {
 });
 
 
-function renderSinglePageAplictaion(Page $page){
-    $page->addScript("singlePageAplication.js", ["type=module"]);
+
+function renderSinglePageAplictaion(Page $page)
+{
+    $page->addScript("singlePageAplication.js");
 }

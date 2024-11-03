@@ -1,6 +1,6 @@
 <?php
 
-namespace logger;
+namespace app\lib;
 
 const _LOG_LEVEL = 'WARNING';
 

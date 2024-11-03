@@ -21,4 +21,9 @@ class JsonResponse extends Response
         }
         echo $this->getBody();
     }
+    public static function __set_state($array)
+    {
+        $instance = new self($array['body'], $array['code'], $array['headers']);
+        return $instance;
+    }
 }
